@@ -32,7 +32,7 @@ MAIN PROC
     mov dl,cr
     int 21h
     
-    ;print prev lowercase
+    ;print 1's compliment
     mov dl,char
     int 21h
                 
