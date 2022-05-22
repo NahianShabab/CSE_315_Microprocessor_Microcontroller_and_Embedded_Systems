@@ -3,17 +3,14 @@
 .STACK 100H
 
 .DATA
-messageX db "Enter x:$"
-messageY db "Enter y:$"
-result db "2x-3y is= $" 
-
-x db ?
-y db ?
-z db ?
 
 
 lf equ 0ah
 cr equ 0dh
+
+message1 db 'enter a uppercase letter B-Z',lf,cr,'$'
+message2 db lf,cr,'result is: $'
+char db ?
     
 .CODE
 
@@ -23,72 +20,30 @@ MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
     
-    ;show messagex
+    ; print message1
+    lea dx,message1
     mov ah,9
-    lea dx,messageX
     int 21h
     
-    
-    ;input x
+    ;input char
     mov ah,1
     int 21h
-    mov x,al
+    mov char,al
     
-    ;print mew line
-    mov ah,2
-    mov dl,lf
-    int 21h
-    mov dl,cr
-    int 21h
+    ;process char
+    add char,20h
+    dec char
     
-    ;show messagey
+    ;print message2
     mov ah,9
-    lea dx,messageY
+    lea dx,message2
     int 21h
     
-    ;input y
-    mov ah,1
-    int 21h
-    mov y,al
-    
-    ;print mew line
+    ;show char
     mov ah,2
-    mov dl,lf
+    mov dl,char
     int 21h
-    mov dl,cr
-    int 21h
-    
-    
-    
-    
-    ;print result message
-    mov ah,9
-    lea dx,result
-    int 21h
-    
-    
-    ;z=2x-3y
-    sub x,30h
-    sub y,30h
-    
-    mov al,y
-    add al,y
-    add al,y
-    neg al
-    
-    
-    add al,x
-    add al,x  
-    
-    add al,30h
-    
-    mov z,al
-            
-    
-    ;print z=2x-3y         
-    mov ah,2
-    mov dl,z
-    int 21h
+        
                 
     ;EXIT
     MOV AH,04CH
