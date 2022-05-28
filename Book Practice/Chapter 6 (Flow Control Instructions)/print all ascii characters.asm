@@ -8,8 +8,6 @@
 CR EQU 0DH
 LF EQU 0AH
 
-
-
 .CODE
 
 MAIN PROC
@@ -17,7 +15,17 @@ MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
     
-      
+    
+    MOV AH,2
+    MOV CX,256
+    MOV DL,0
+    
+    PRINT_LOOP:
+        INT 21H
+        ADD DL,1
+        DEC CX
+        JNZ PRINT_LOOP  
+    
     ;DOS EXIT
     MOV AH, 4CH
     INT 21H
