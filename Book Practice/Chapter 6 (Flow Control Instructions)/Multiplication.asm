@@ -1,0 +1,41 @@
+.MODEL SMALL
+
+
+.STACK 100H
+
+
+.DATA
+CR EQU 0DH
+LF EQU 0AH
+
+M DW 10
+N DW 100
+PRODUCT DW 0
+
+
+.CODE
+
+MAIN PROC
+	;DATA SEGMENT INITIALIZATION
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    ;PRODUCT = M * N
+    
+    WHILE:
+        CMP N,0
+        JBE END_WHILE
+        MOV AX,M
+        ADD PRODUCT,AX
+        DEC N
+        JMP WHILE
+    END_WHILE:
+        MOV DX,PRODUCT 
+        
+    
+    ;DOS EXIT
+    MOV AH, 4CH
+    INT 21H
+
+MAIN ENDP
+END MAIN
