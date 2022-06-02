@@ -8,23 +8,14 @@
 CR EQU 0DH
 LF EQU 0AH
 
-NEWLINE DB CR,LF,'$'
-
-
-
-
 .CODE
 
 MAIN PROC
 	;DATA SEGMENT INITIALIZATION
     MOV AX, @DATA
     MOV DS, AX
+        
     
-    
-    
-    
-    
-      
     
     ;DOS EXIT
     MOV AH, 4CH

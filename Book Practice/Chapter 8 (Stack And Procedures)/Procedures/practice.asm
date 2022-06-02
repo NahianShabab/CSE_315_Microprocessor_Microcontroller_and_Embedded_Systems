@@ -8,11 +8,6 @@
 CR EQU 0DH
 LF EQU 0AH
 
-NEWLINE DB CR,LF,'$'
-
-
-
-
 .CODE
 
 MAIN PROC
@@ -21,10 +16,6 @@ MAIN PROC
     MOV DS, AX
     
     
-    
-    
-    
-      
     
     ;DOS EXIT
     MOV AH, 4CH

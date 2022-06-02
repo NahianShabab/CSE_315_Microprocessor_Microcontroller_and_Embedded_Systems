@@ -1,0 +1,42 @@
+.MODEL SMALL
+
+
+.STACK 100H
+
+
+.DATA
+CR EQU 0DH
+LF EQU 0AH
+
+MESSAGE1 DB 'HELLO THIS IS A MESSAGE!',CR,LF,'$'
+MESSAGE2 DB 'HELLO THIS IS Another MESSAGE!',CR,LF,'$'
+MESSAGE3 DB 'this is the last MESSAGE!',CR,LF,'$'
+
+.CODE
+
+PRINT PROC
+
+MOV AH,9
+INT 21H
+ret
+    
+PRINT ENDP
+
+MAIN PROC
+	;DATA SEGMENT INITIALIZATION
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    mov ax,0ffffh
+    push ax
+    
+    pop bx
+    push bx
+       
+    
+    ;DOS EXIT
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    
+END MAIN

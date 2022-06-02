@@ -10,6 +10,7 @@ LF EQU 0AH
 
 NEWLINE DB CR,LF,'$'
 
+ARR DB 'A','B','C','D','E'
 
 
 
@@ -20,11 +21,14 @@ MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
     
+    LEA SI,ARR
     
+    MOV BYTE PTR [SI+1],'K'
     
+    MOV AH,2
+    MOV DL,ARR+1
+    INT 21H
     
-    
-      
     
     ;DOS EXIT
     MOV AH, 4CH

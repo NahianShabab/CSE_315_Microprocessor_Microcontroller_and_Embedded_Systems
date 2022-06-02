@@ -1,0 +1,47 @@
+.MODEL SMALL
+
+
+.STACK 100H
+
+
+.DATA
+CR EQU 0DH
+LF EQU 0AH
+
+.CODE
+
+ARR DB 1,2,3,5,6
+
+MAIN PROC
+	;DATA SEGMENT INITIALIZATION
+    MOV AX, @DATA
+    MOV DS, AX
+        
+    LEA SI,ARR
+    MOV CX,5
+    CALL SUM
+    
+    ;DOS EXIT
+    MOV AH, 4CH
+    INT 21H
+
+MAIN ENDP
+
+SUM PROC
+  XOR AL,AL
+  JCXZ SUM_SKIP
+  SUM_WHILE_1:
+    ADD AL,[SI]
+    ADD SI,1
+    
+    LOOP SUM_WHILE_1
+  SUM_SKIP:  
+   
+  RET  
+SUM ENDP
+
+
+
+
+
+END MAIN

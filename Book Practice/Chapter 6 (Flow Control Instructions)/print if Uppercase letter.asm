@@ -8,12 +8,28 @@
 CR EQU 0DH
 LF EQU 0AH
 
+CHAR DB ?
+
 .CODE
 
 MAIN PROC
 	;DATA SEGMENT INITIALIZATION
     MOV AX, @DATA
     MOV DS, AX
+    
+    MOV AH,1
+    INT 21H
+    MOV CHAR,AL
+    
+    CMP AL,'A'
+    JB ELSE
+    CMP AL,'Z'
+    JA ELSE
+    MOV AH,2
+    MOV DL,CHAR
+    INT 21H
+    
+    ELSE:
     
     
     ;DOS EXIT
