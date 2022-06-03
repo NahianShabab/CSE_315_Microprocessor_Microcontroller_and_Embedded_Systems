@@ -8,11 +8,24 @@
 CR EQU 0DH
 LF EQU 0AH
 NEWLINE DB CR,LF,'$'
+COMMA DB ',$' 
+
+
 ; N IS A UNSIGNED NUMBER
 N DW ? 
 
 ;MAIN DATA ARRAY
-ARR DW 200 ?
+ARR DW 100 DUP(?)
+
+
+;STRING MESSAGES FOR DISPLAY
+S_ENTER_N DB 'Enter the value of N (Array length): $'
+S_ENTER_NUMBER DB 'Enter a number: $'
+S_SORTED_ARRAY DB 'Sorted Array is: $'
+S_ENTER_SEARCH_ELEMENT DB 'Enter x to search in array: $'
+S_NOT_FOUND DB 'NOT FOUND$'
+S_ELEMENT_FOUND DB 'Element found at index: $'
+S_SEARCH_AGAIN DB 'Do you want to search again?y:Yes/(anything else:No): $'
 .CODE
 
 
@@ -23,6 +36,8 @@ MAIN PROC
     
     ;STEP 1: INPUT N
     MAIN_INPUT_N:
+        LEA DX,S_ENTER_N
+        CALL PRINT_STRING
         CALL INPUT_DECIMAL
         MOV N,AX
     
@@ -38,13 +53,19 @@ MAIN PROC
     MOV CX,N
     LEA SI,ARR
     MAIN_INPUT_LOOP:
+        LEA DX,S_ENTER_NUMBER
+        CALL PRINT_STRING
+                
         CALL INPUT_DECIMAL
         MOV [SI],AX
-        ADD SI,2 
+        ADD SI,2
+            
+         
         ;PRINT NEWLINE
         LEA DX,NEWLINE
         CALL PRINT_STRING 
         LOOP MAIN_INPUT_LOOP
+    
     
     ;STEP 4: SORT THE ARRAY
     MOV CX,N
@@ -56,17 +77,88 @@ MAIN PROC
     CALL PRINT_STRING
     
     ;STEP 5: DISPLAY THE ARRAY
+    LEA DX,S_SORTED_ARRAY
+    CALL PRINT_STRING
+    
     LEA SI,ARR
     MOV CX,N
     MAIN_DISPLAY_LOOP:
        MOV AX,[SI]
        CALL OUTPUT_DECIMAL
        ADD SI,2
-       ;PRINT NEWLINE
-       LEA DX,NEWLINE
+       ;PRINT COMMA
+       LEA DX,COMMA
        CALL PRINT_STRING  
-       LOOP MAIN_DISPLAY_LOOP        
+       LOOP MAIN_DISPLAY_LOOP
     
+    ;PRINT NEW LINE
+    LEA DX,NEWLINE
+    CALL PRINT_STRING   
+    
+    ;STEP 6: INPUT X
+    MAIN_INPUT_X:
+    LEA DX,S_ENTER_SEARCH_ELEMENT
+    CALL PRINT_STRING
+    
+    CALL INPUT_DECIMAL
+    
+    ;PRINT NEW LINE
+    LEA DX,NEWLINE
+    CALL PRINT_STRING 
+    
+    ;STEP 7: SEARCH X IN ARR
+    MOV CX,N
+    LEA SI,ARR
+    CALL BINARY_SEARCH
+    
+    ;PRINT NEW LINE
+    LEA DX,NEWLINE
+    CALL PRINT_STRING
+    
+     
+    ;DISPLAY INDEX
+    MOV AX,BX
+    CMP AX,-1
+    JNE MAIN_PRINT_INDEX
+    LEA DX,S_NOT_FOUND
+    CALL PRINT_STRING
+    LEA DX,NEWLINE
+    CALL PRINT_STRING
+    JMP MAIN_SEARCH_AGAIN
+    
+    MAIN_PRINT_INDEX:
+        LEA DX,S_ELEMENT_FOUND
+        CALL PRINT_STRING
+        CALL OUTPUT_DECIMAL
+    
+    ;PRINT NEWLINE    
+    LEA DX,NEWLINE
+    CALL PRINT_STRING
+    
+    ;STEP 8: SEARCH AGAIN
+    MAIN_SEARCH_AGAIN:
+    LEA DX,S_SEARCH_AGAIN
+    CALL PRINT_STRING
+    
+    MOV AH,1
+    INT 21H
+    
+    CMP AL,'y'
+    JNE MAIN_GOTO_STEP1
+    ;PRINT NEWLINE    
+    LEA DX,NEWLINE
+    CALL PRINT_STRING
+    JMP MAIN_INPUT_X 
+    
+    MAIN_GOTO_STEP1:  
+    ;PRINT NEWLINE    
+    LEA DX,NEWLINE
+    CALL PRINT_STRING
+    
+    ;STEP 9: GO TO STEP 1
+    JMP MAIN_INPUT_N      
+    
+    ;STEP 10: END
     MAIN_END:
         ;DOS EXIT
         MOV AH, 4CH
@@ -333,6 +425,96 @@ INSERTION_SORT PROC
         POP AX
     RET
 INSERTION_SORT ENDP
+;-----------------------------------------
+;-----------------------------------------
+
+
+
+
+;-----------------------------------------
+;-----------------------------------------
+;PROCEDURE: BINARY SEARCH
+
+;@INPUT:
+;   SI: POINTER TO THE ARRAY
+;   CX: SIZE OF THE ARRAY
+;   AX: NUMBER TO BE SEARCHED
+;@OUTPUT:
+;   BX: THE INDEX OF THE NUMBER,
+;   RETURN -1 IF NOT FOUND
+;-----------------------------------------
+BINARY_SEARCH PROC
+    PUSH AX
+    PUSH CX
+    PUSH DX
+    
+    ;DX=low=0
+    XOR DX,DX
+    
+    ;CX=high= Array.length-1
+    DEC CX
+    
+    
+    BINARY_SEARCH_LOOP1:
+        ;while low<=high loop
+        CMP DX,CX
+        JG  BINARY_SEARCH_UNSUCCESS
+        
+        ;BX=mid= floor((low+high)/2)
+        MOV BX,DX
+        ADD BX,CX
+        PUSH AX
+        PUSH DX
+        XOR DX,DX
+        MOV AX,BX
+        MOV BX,2
+        DIV BX
+        MOV BX,AX
+        POP DX
+        POP AX
+        
+        ;CX=A[mid]
+        PUSH SI
+        PUSH CX
+        MOV CX,BX
+        ADD CX,CX
+        ADD SI,CX
+        MOV CX,[SI]
+        
+        
+        CMP CX,AX
+        POP CX
+        POP SI
+        
+        ;CASE 1: A[mid]== x
+        JE BINARY_SEARCH_CASE_1
+        ;CASE 2: A[mid]< x
+        JL BINARY_SEARCH_CASE_2
+        ;CASE 3: A[mid]>x
+        JMP BINARY_SEARCH_CASE_3
+        
+        BINARY_SEARCH_CASE_1:
+            JMP END_BINARY_SEARCH
+        BINARY_SEARCH_CASE_2:
+            MOV DX,BX
+            INC DX
+            JMP BINARY_SEARCH_END_CASE
+        BINARY_SEARCH_CASE_3:
+            MOV CX,BX
+            DEC CX
+        
+        BINARY_SEARCH_END_CASE:
+            JMP BINARY_SEARCH_LOOP1
+    
+    BINARY_SEARCH_UNSUCCESS:
+        MOV BX,-1
+    END_BINARY_SEARCH:
+        POP DX
+        POP CX
+        POP AX
+        
+    RET    
+BINARY_SEARCH ENDP
 ;-----------------------------------------
 ;-----------------------------------------
 END MAIN
