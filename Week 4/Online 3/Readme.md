@@ -1,10 +1,9 @@
 # Online 3 (Loop)
 ## Problem Description
 
-### Given an Integer N, print the number of faulty numbers between
-### 1 to N.
+### Given an Integer N, print the number of faulty numbers between 1 to N.
 
-### A number is called faulty if the sum of the divisors of that number ### (excluding 1 and the number itself) is greater than that number.
+### A number is called faulty if the sum of the divisors of that number (excluding 1 and the number itself) is greater than that number.
 
 ### For example, 12 is faulty because 2+3+4+6=15>12
 ### But 6 is not faulty because 2+3=5<6
