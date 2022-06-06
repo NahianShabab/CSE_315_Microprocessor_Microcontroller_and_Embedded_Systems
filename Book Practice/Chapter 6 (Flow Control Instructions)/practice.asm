@@ -9,7 +9,7 @@ CR EQU 0DH
 LF EQU 0AH
 
 NEWLINE DB CR,LF,'$'
-
+ARR DB 1,2,3,4,5
 
 
 
@@ -20,11 +20,6 @@ MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
     
-    
-    
-    
-    
-      
     
     ;DOS EXIT
     MOV AH, 4CH
