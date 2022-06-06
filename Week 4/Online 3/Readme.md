@@ -1,5 +1,5 @@
-#Online 3 (Loop)
-##Problem Description
+# Online 3 (Loop)
+## Problem Description
 
 ### Given an Integer N, print the number of faulty numbers between
 ### 1 to N.
